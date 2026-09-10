@@ -1,0 +1,19 @@
+{
+  "appId": "com.discipline.app",
+  "appName": "Discipline",
+  "webDir": "www",
+  "backgroundColor": "#08090A",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_name",
+      "iconColor": "#6366F1"
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#08090A"
+    }
+  }
+}
