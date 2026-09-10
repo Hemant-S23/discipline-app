@@ -12,12 +12,15 @@
     async init() {
       if (window.Capacitor && window.Capacitor.isNativePlatform()) {
         this.isNative = true;
+        document.documentElement.classList.add('is-capacitor');
         console.log('[DisciplineNative] Running on native platform:', window.Capacitor.getPlatform());
         
-        // Configure Status Bar if available
+        // Configure Status Bar for notch & dark theme
         if (window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {
           try {
+            await window.Capacitor.Plugins.StatusBar.setOverlaysWebView({ overlay: true });
             await window.Capacitor.Plugins.StatusBar.setBackgroundColor({ color: '#08090A' });
+            await window.Capacitor.Plugins.StatusBar.setStyle({ style: 'DARK' });
           } catch (e) {
             console.warn('[DisciplineNative] StatusBar error:', e);
           }
