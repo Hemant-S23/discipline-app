@@ -83,7 +83,7 @@
 
   .sidebar { display: none !important; }
 
-  /* Mobile Top Header (Fixed across full viewport width, notch safe) */
+  /* Mobile Top Header (Fixed across full viewport width) */
   .mobile-top-header {
     display: flex !important;
     position: fixed !important;
@@ -92,13 +92,13 @@
     right: 0 !important;
     width: 100vw !important;
     max-width: 100% !important;
-    height: calc(60px + var(--app-safe-top, 0px)) !important;
+    height: 60px !important;
     background: var(--surface) !important;
     border-bottom: 1px solid var(--border-2) !important;
     z-index: 500 !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: var(--app-safe-top, 0px) 16px 0 16px !important;
+    padding: 0 16px !important;
     box-sizing: border-box !important;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
@@ -130,7 +130,7 @@
     width: 100% !important;
     max-width: 100vw !important;
     padding: 0 !important;
-    padding-top: calc(60px + var(--app-safe-top, 0px)) !important;
+    padding-top: 60px !important;
     padding-bottom: calc(var(--mobile-nav-h) + 16px) !important;
     box-sizing: border-box !important;
     overflow-x: hidden !important;

@@ -6,11 +6,6 @@
 
 /* ── Design Tokens ──────────────────────────────────────────── */
 :root {
-  /* Safe Area / Notch Variables */
-  --safe-area-top:    env(safe-area-inset-top, 0px);
-  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
-  --app-safe-top:     0px;
-
   /* Primary Accent - Refined Electric Indigo (Linear style) */
   --accent:       #5E6AD2;
   --accent-light: #7E8CE0;
@@ -18,13 +13,6 @@
   --accent-10:    rgba(94, 106, 210, 0.08);
   --accent-20:    rgba(94, 106, 210, 0.16);
   --accent-glow:  0 0 16px rgba(94, 106, 210, 0.20);
-}
-
-/* Native App Notch & Punch-hole Safe Area */
-html.is-capacitor,
-.is-capacitor {
-  --app-safe-top: max(env(safe-area-inset-top, 0px), 36px);
-}
 
   /* Semantic Colors - Precision HSL */
   --success:      #10B981;
@@ -659,7 +647,7 @@ ul, ol { list-style: none; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: calc(20px + var(--app-safe-top, 0px)) 20px 20px 20px;
+  padding: 20px;
   border-bottom: 1px solid var(--border);
 }
 
