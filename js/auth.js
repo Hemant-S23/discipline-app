@@ -3,8 +3,9 @@
 // ============================================================
 
 import {
-  auth, db, googleProvider, isFirebaseConfigured,
-  signInWithPopup, signInWithRedirect, getRedirectResult, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  auth, db, googleProvider, isFirebaseConfigured, GoogleAuthProvider,
+  signInWithPopup, signInWithRedirect, getRedirectResult, signInWithCredential,
+  signInWithEmailAndPassword, createUserWithEmailAndPassword,
   signOut, onAuthStateChanged, deleteUser, sendPasswordResetEmail, updateProfile,
   EmailAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup,
   sendEmailVerification,
@@ -65,6 +66,21 @@ export async function handleRedirectResult() {
 }
 
 export async function initAuth(onUserChange) {
+  // Initialize native GoogleAuth on Capacitor Android
+  if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+    try {
+      if (window.Capacitor.Plugins && window.Capacitor.Plugins.GoogleAuth) {
+        window.Capacitor.Plugins.GoogleAuth.initialize({
+          clientId: '356781067799-5su4b6r7tfgpgpm590cd4b0f1853jeu5.apps.googleusercontent.com',
+          scopes: ['profile', 'email'],
+          grantOfflineAccess: true
+        });
+      }
+    } catch (e) {
+      console.warn('GoogleAuth initialize error:', e);
+    }
+  }
+
   if (isFirebaseConfigured && auth) {
     onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
@@ -289,6 +305,48 @@ export async function signUpWithEmail(rawEmail, password, name) {
 }
 
 export async function loginWithGoogle() {
+  // 1. Native Google Sign-In for Android App (Capacitor)
+  if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+    try {
+      const GoogleAuth = window.Capacitor.Plugins && window.Capacitor.Plugins.GoogleAuth;
+      if (GoogleAuth) {
+        const googleUser = await GoogleAuth.signIn();
+        const idToken = googleUser && googleUser.authentication && googleUser.authentication.idToken;
+        if (!idToken) {
+          throw new Error('Google did not return an authentication token.');
+        }
+
+        const credential = GoogleAuthProvider.credential(idToken);
+        const cred = await signInWithCredential(auth, credential);
+        const name = cred.user.displayName || cred.user.email.split('@')[0];
+
+        const hasCloudHabits = await syncCloudData(cred.user.uid);
+
+        updateUser({
+          email: cred.user.email,
+          name: cred.user.displayName || name,
+          isLoggedIn: true,
+          authDone: true,
+          onboardingDone: hasCloudHabits
+        });
+
+        showToast(`Welcome${hasCloudHabits ? ' back' : ''}, ${cred.user.displayName || name}!`, 'success');
+        if (window._updateAccountUI) window._updateAccountUI(cred.user);
+        return cred.user;
+      }
+    } catch (nativeErr) {
+      console.warn('Native Google Sign-In error:', nativeErr);
+      const errStr = String(nativeErr?.message || nativeErr?.error || nativeErr || '');
+      if (errStr.includes('cancel') || errStr.includes('USER_CANCELLED') || errStr.includes('12501')) {
+        showToast('Google sign-in was cancelled.', 'info');
+        return null;
+      }
+      showToast('Google Sign-In failed: ' + (nativeErr?.message || errStr), 'error');
+      throw nativeErr;
+    }
+  }
+
+  // 2. Web Browser Google Sign-In (Popup / Redirect)
   if (isFirebaseConfigured && auth) {
     try {
       const cred = await signInWithPopup(auth, googleProvider);

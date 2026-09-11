@@ -28,7 +28,7 @@ jobs:
           node-version: '20'
 
       - name: Install Node Dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Build Web Assets into www
         run: npm run build
